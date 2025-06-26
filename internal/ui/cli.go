@@ -188,7 +188,7 @@ func (c *CLI) selectRunInteractive(runs []*config.RunConfig) (*config.RunConfig,
 // listRuns displays a numbered list of available runs
 func (c *CLI) listRuns(runs []*config.RunConfig) {
 	for i, run := range runs {
-		fmt.Printf("  %d. %s (%s - %d splits)\n", i+1, run.Category, run.Game, len(run.Splits))
+		fmt.Printf("  %d. %s (%s - %d splits)\n", i+1, run.Name, run.Game, len(run.Splits))
 	}
 }
 

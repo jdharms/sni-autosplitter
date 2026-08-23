@@ -95,6 +95,7 @@ Every flag can also be set via an environment variable prefixed with
 | `--log-level`         | `info`           | Log level (`debug`, `info`, `warn`, `error`)                             |
 | `--sni-host`          | `localhost`      | SNI gRPC server host                                                     |
 | `--sni-port`          | `8191`           | SNI gRPC server port                                                     |
+| `--livesplit-port`    | `1990`           | WebSocket port for LiveSplit One connections                            |
 | `--enable-manual-ops` | `false`          | Enable manual split/reset/pause/resume/test commands, for development   |
 | `--tls-cert`          | *(none)*         | Path to TLS certificate file; enables WSS on the LiveSplit One server   |
 | `--tls-key`           | *(none)*         | Path to TLS private key file; enables WSS on the LiveSplit One server   |

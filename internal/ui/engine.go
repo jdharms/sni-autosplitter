@@ -21,16 +21,18 @@ type EngineController struct {
 	engine          *engine.SplittingEngine
 	liveSplitServer *livesplit.Server
 	enableManualOps bool // Feature flag for manual operations (split, reset, pause, resume)
+	liveSplitPort   int
 	tlsCert         string
 	tlsKey          string
 }
 
 // NewEngineController creates a new engine controller
-func NewEngineController(logger *logrus.Logger, cli *CLI, enableManualOps bool, tlsCert, tlsKey string) *EngineController {
+func NewEngineController(logger *logrus.Logger, cli *CLI, enableManualOps bool, liveSplitPort int, tlsCert, tlsKey string) *EngineController {
 	return &EngineController{
 		logger:          logger,
 		cli:             cli,
 		enableManualOps: enableManualOps,
+		liveSplitPort:   liveSplitPort,
 		tlsCert:         tlsCert,
 		tlsKey:          tlsKey,
 	}
@@ -59,7 +61,7 @@ func (ec *EngineController) InitializeEngine(
 	)
 
 	// Create and initialize LiveSplit server
-	ec.liveSplitServer = livesplit.NewServer(ec.logger, "localhost", 1990, ec.tlsCert, ec.tlsKey)
+	ec.liveSplitServer = livesplit.NewServer(ec.logger, "localhost", ec.liveSplitPort, ec.tlsCert, ec.tlsKey)
 	ec.liveSplitServer.SetEngine(ec.engine)
 
 	ec.cli.printSuccess("Splitting engine initialized")

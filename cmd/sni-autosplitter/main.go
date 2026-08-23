@@ -12,8 +12,6 @@ import (
 )
 
 const (
-	// LiveSplitOnePort is the WebSocket port for LiveSplit One connections
-	LiveSplitOnePort = 1990
 	// MemoryPollInterval is the interval between memory reads in milliseconds
 	MemoryPollInterval = time.Second / 60 // 60 FPS
 )
@@ -29,6 +27,7 @@ var (
 	logLevel        string
 	sniHost         string
 	sniPort         int
+	liveSplitPort   int
 	enableManualOps bool
 	tlsCert         string
 	tlsKey          string
@@ -63,6 +62,7 @@ func init() {
 		logLevel = viper.GetString("log-level")
 		sniHost = viper.GetString("sni-host")
 		sniPort = viper.GetInt("sni-port")
+		liveSplitPort = viper.GetInt("livesplit-port")
 		enableManualOps = viper.GetBool("enable-manual-ops")
 		tlsCert = viper.GetString("tls-cert")
 		tlsKey = viper.GetString("tls-key")
@@ -76,6 +76,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&logLevel, "log-level", "info", "Log level (debug, info, warn, error)")
 	rootCmd.PersistentFlags().StringVar(&sniHost, "sni-host", "localhost", "SNI gRPC server host")
 	rootCmd.PersistentFlags().IntVar(&sniPort, "sni-port", 8191, "SNI gRPC server port")
+	rootCmd.PersistentFlags().IntVar(&liveSplitPort, "livesplit-port", 1990, "WebSocket port for LiveSplit One connections")
 	rootCmd.PersistentFlags().BoolVar(&enableManualOps, "enable-manual-ops", false, "Enable manual split operations for development (split, reset, pause, resume, test)")
 	rootCmd.PersistentFlags().StringVar(&tlsCert, "tls-cert", "", "Path to TLS certificate file (enables WSS)")
 	rootCmd.PersistentFlags().StringVar(&tlsKey, "tls-key", "", "Path to TLS private key file (enables WSS)")
@@ -104,11 +105,12 @@ func runAutosplitter(cmd *cobra.Command, args []string) {
 		"log-level":         logLevel,
 		"sni-host":          sniHost,
 		"sni-port":          sniPort,
+		"livesplit-port":    liveSplitPort,
 		"enable-manual-ops": enableManualOps,
 	}).Info("Configuration loaded")
 
 	// Create and start the CLI interface
-	cliInterface := ui.NewCLI(logger, gamesDir, runsDir, enableManualOps, sniHost, sniPort, tlsCert, tlsKey)
+	cliInterface := ui.NewCLI(logger, gamesDir, runsDir, enableManualOps, sniHost, sniPort, liveSplitPort, tlsCert, tlsKey)
 
 	if err := cliInterface.Start(runName); err != nil {
 		logger.WithError(err).Fatal("Failed to start autosplitter")

@@ -257,7 +257,7 @@ func (ss *SplitterSession) TriggerUndoSplit() bool {
 	ss.mu.Lock()
 	defer ss.mu.Unlock()
 
-	if ss.state != StateRunning {
+	if ss.state != StateRunning && ss.state != StatePaused {
 		return false
 	}
 
@@ -284,7 +284,7 @@ func (ss *SplitterSession) TriggerSkipSplit() bool {
 	ss.mu.Lock()
 	defer ss.mu.Unlock()
 
-	if ss.state != StateRunning {
+	if ss.state != StateRunning && ss.state != StatePaused {
 		return false
 	}
 
@@ -398,7 +398,7 @@ func (ss *SplitterSession) CanSplit() bool {
 func (ss *SplitterSession) CanSkip() bool {
 	ss.mu.RLock()
 	defer ss.mu.RUnlock()
-	return ss.state == StateRunning && ss.currentSplit+1 < len(ss.runConfig.Splits)
+	return (ss.state == StateRunning || ss.state == StatePaused) && ss.currentSplit+1 < len(ss.runConfig.Splits)
 }
 
 // GetProgress returns the completion progress as a percentage (0-100)

@@ -284,12 +284,16 @@ func (ec *EngineController) displayDetailedStats() {
 
 	// Autostart info
 	fmt.Printf("\nAutostart Configuration:\n")
-	autostart := session.GetGameConfig().Autostart
-	fmt.Printf("  Address: %s\n", autostart.Address)
-	fmt.Printf("  Value: %s\n", autostart.Value)
-	fmt.Printf("  Type: %s\n", autostart.Type)
-	if autostart.Note != "" {
-		fmt.Printf("  Note: %s\n", autostart.Note)
+	if session.GetRunConfig().DisableAutostart {
+		fmt.Printf("  Disabled for this run - waiting for manual start\n")
+	} else {
+		autostart := session.GetGameConfig().Autostart
+		fmt.Printf("  Address: %s\n", autostart.Address)
+		fmt.Printf("  Value: %s\n", autostart.Value)
+		fmt.Printf("  Type: %s\n", autostart.Type)
+		if autostart.Note != "" {
+			fmt.Printf("  Note: %s\n", autostart.Note)
+		}
 	}
 
 	fmt.Println(strings.Repeat("=", 60))
@@ -422,8 +426,12 @@ func (ec *EngineController) handleStatusEvent(event engine.StatusEvent) {
 	case engine.StateWaitingForStart:
 		ec.cli.printInfo("⏳ " + event.Message)
 		// Show special autostart message
-		ec.cli.printInfo("Autostart enabled - waiting for start condition...")
-		ec.cli.printInfo("The run will automatically start when the game begins")
+		if ec.engine.GetSession().GetRunConfig().DisableAutostart {
+			ec.cli.printInfo("Autostart disabled for this run - waiting for manual start")
+		} else {
+			ec.cli.printInfo("Autostart enabled - waiting for start condition...")
+			ec.cli.printInfo("The run will automatically start when the game begins")
+		}
 	case engine.StateRunning:
 		ec.cli.printSuccess("▶️ " + event.Message)
 		// Show special game start message if transitioning from waiting

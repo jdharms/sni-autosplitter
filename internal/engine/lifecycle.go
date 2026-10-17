@@ -26,7 +26,11 @@ func (se *SplittingEngine) Start(ctx context.Context) error {
 
 	// Initialize state
 	se.session.SetState(StateWaitingForStart)
-	se.logger.Info("Autostart enabled - waiting for start condition")
+	if se.session.GetRunConfig().DisableAutostart {
+		se.logger.Info("Autostart disabled for this run - waiting for manual start")
+	} else {
+		se.logger.Info("Autostart enabled - waiting for start condition")
+	}
 
 	return nil
 }

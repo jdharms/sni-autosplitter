@@ -367,6 +367,9 @@ func (c *Client) handleIncomingMessage(message []byte) {
 	// Handle different command types
 	if event, ok := cmd["event"].(string); ok {
 		switch event {
+		case "Started":
+			c.logger.Info("Started event received from LiveSplit client")
+			c.handleStartedEvent()
 		case "Reset":
 			c.logger.Info("Reset event received from LiveSplit client")
 			c.handleResetEvent()
@@ -379,6 +382,21 @@ func (c *Client) handleIncomingMessage(message []byte) {
 		default:
 			c.logger.WithField("event", event).Info("Unhandled event from LiveSplit client")
 		}
+	}
+}
+
+// handleStartedEvent handles started events from LiveSplit One. This lets the
+// LiveSplit timer starting move the engine past autostart into the running
+// state so it begins evaluating the first split's condition. The engine's own
+// "start" command is broadcast to all clients (including the sender) via the
+// status event monitor, so no explicit forwarding is done here.
+func (c *Client) handleStartedEvent() {
+	if c.server.engine != nil {
+		if err := c.server.engine.ManualStart(); err != nil {
+			c.logger.WithError(err).Error("Failed to start engine")
+			return
+		}
+		c.logger.Info("Run started by LiveSplit client")
 	}
 }
 

@@ -5,6 +5,21 @@ import (
 	"fmt"
 )
 
+// ManualStart manually starts the run, bypassing the autostart condition
+func (se *SplittingEngine) ManualStart() error {
+	if !se.session.CanStart() {
+		return fmt.Errorf("cannot start in current state: %s", se.session.GetState())
+	}
+
+	se.logger.Info("Manual start triggered")
+	se.session.Start()
+
+	se.logger.Info("Run started")
+	se.publishStatus(StateRunning, "Run started manually")
+
+	return nil
+}
+
 // ManualSplit manually triggers a split
 func (se *SplittingEngine) ManualSplit() error {
 	if !se.session.CanSplit() {
@@ -39,7 +54,11 @@ func (se *SplittingEngine) ManualReset() error {
 
 	// Publish reset status
 	se.logger.Info("Run reset")
-	se.publishStatus(StateWaitingForStart, "Run reset - waiting for autostart")
+	if se.session.GetRunConfig().DisableAutostart {
+		se.publishStatus(StateWaitingForStart, "Run reset - waiting for manual start")
+	} else {
+		se.publishStatus(StateWaitingForStart, "Run reset - waiting for autostart")
+	}
 
 	return nil
 }

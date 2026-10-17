@@ -110,6 +110,12 @@ func (se *SplittingEngine) tick() error {
 
 // checkAutostart checks if the autostart condition is met
 func (se *SplittingEngine) checkAutostart() error {
+	if se.session.GetRunConfig().DisableAutostart {
+		// Autostart is disabled for this run config; only a manual start
+		// (e.g. LiveSplit's "Started" event) can leave StateWaitingForStart.
+		return nil
+	}
+
 	autostart := se.session.GetGameConfig().Autostart
 	autostartState := se.session.GetAutostartState()
 

@@ -6,10 +6,11 @@ import (
 
 // RunConfig represents a run configuration that defines a sequence of splits
 type RunConfig struct {
-	Name     string   `json:"name"`
-	Category string   `json:"category"`
-	Game     string   `json:"game"`
-	Splits   []string `json:"splits"`
+	Name             string   `json:"name"`
+	Category         string   `json:"category"`
+	Game             string   `json:"game"`
+	Splits           []string `json:"splits"`
+	DisableAutostart bool     `json:"disableAutostart,omitempty"`
 }
 
 // Validate validates the run configuration

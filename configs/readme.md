@@ -142,7 +142,8 @@ Run configurations define which splits to use for a specific speedrun category.
     "Split Name 1",
     "Split Name 2",
     "Split Name 3"
-  ]
+  ],
+  "disableAutostart": false
 }
 ```
 
@@ -152,6 +153,7 @@ Run configurations define which splits to use for a specific speedrun category.
 - `category`: Short category name used for matching command line arguments
 - `game`: Must match the filename of a game config (without .json extension)
 - `splits`: Array of split names that must exist in the referenced game config
+- `disableAutostart` (optional, default `false`): If `true`, the run ignores the game config's `autostart` condition and waits in the "waiting for start" state until started manually (e.g. by sending a `Started` event from a connected LiveSplit client). Useful for run configs that begin mid-game, where the game's normal autostart condition wouldn't apply.
 
 ## Validation
 
